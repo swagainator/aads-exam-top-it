@@ -68,13 +68,23 @@ bool alekseev::readDatedMeetings(
     DateArray& dates)
 {
   std::string line;
+  bool hasMeetingRow = false;
+  bool hasInvalidRow = false;
   while (std::getline(input, line))
   {
     DatedMeeting meeting = {{0, 0, 0}, 0, 0, 0};
     if (!parseDatedMeetingLine(line, meeting))
     {
-      return false;
+      size_t position = 0;
+      Date date = {0, 0, 0};
+      if (parseDateFromCommand(line, position, date))
+      {
+        pushUniqueDate(dates, date);
+      }
+      hasInvalidRow = true;
+      continue;
     }
+    hasMeetingRow = true;
     pushUniqueDate(dates, meeting.date);
     if (meeting.first != meeting.second)
     {
@@ -83,7 +93,7 @@ bool alekseev::readDatedMeetings(
       pushDatedMeeting(meetings, meeting);
     }
   }
-  return input.eof();
+  return input.eof() && (!hasInvalidRow || hasMeetingRow);
 }
 
 size_t alekseev::findPersonIndex(const PersonArray& persons, size_t id)

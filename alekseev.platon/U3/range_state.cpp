@@ -2,6 +2,25 @@
 
 #include <ostream>
 
+namespace alekseev
+{
+  namespace
+  {
+    bool isInputDateLess(const Date& first, const Date& second)
+    {
+      if (first.day != second.day)
+      {
+        return first.day < second.day;
+      }
+      if (first.month != second.month)
+      {
+        return first.month < second.month;
+      }
+      return first.year < second.year;
+    }
+  }
+}
+
 void alekseev::initInitialRange(
     const DateArray& dates,
     RangeState& range)
@@ -16,6 +35,11 @@ void alekseev::applyAfter(
     const Date& date,
     RangeState& range)
 {
+  if (isInputDateLess(dates.data[range.lastIndex], date))
+  {
+    range.empty = true;
+    return;
+  }
   const size_t index = findFirstDateNotBefore(
       dates,
       range.firstIndex,
@@ -77,7 +101,8 @@ bool alekseev::isDateInRange(
     return false;
   }
   return !isDateLess(date, dates.data[range.firstIndex]) &&
-      !isDateLess(dates.data[range.lastIndex], date);
+      !isDateLess(dates.data[range.lastIndex], date) &&
+      !isInputDateLess(date, dates.data[range.firstIndex]);
 }
 
 void alekseev::printRange(
