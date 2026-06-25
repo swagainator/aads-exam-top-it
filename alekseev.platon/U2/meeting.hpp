@@ -42,6 +42,17 @@ namespace alekseev
       const MeetingArray& meetings,
       size_t id,
       MeetingViewArray& views);
+  void collectCommonPersons(
+      const MeetingArray& meetings,
+      size_t first,
+      size_t second,
+      Array< size_t >& ids);
+  void removePersonAt(PersonArray& persons, size_t index);
+  void replacePersonInMeetings(
+      MeetingArray& meetings,
+      size_t oldId,
+      size_t newId);
+  void removeSelfMeetings(MeetingArray& meetings);
   void sortMeetingViews(MeetingViewArray& views);
   void sortIds(Array< size_t >& ids);
 }

@@ -33,6 +33,31 @@ namespace alekseev
       std::ostream& output,
       const PersonArray& persons,
       const MeetingArray& meetings);
+  bool handleCommons(
+      const std::string& arguments,
+      std::ostream& output,
+      const PersonArray& persons,
+      const MeetingArray& meetings);
+  bool handleLess(
+      const std::string& arguments,
+      std::ostream& output,
+      const PersonArray& persons,
+      const MeetingArray& meetings);
+  bool handleGreater(
+      const std::string& arguments,
+      std::ostream& output,
+      const PersonArray& persons,
+      const MeetingArray& meetings);
+  bool handleRedesc(
+      const std::string& arguments,
+      PersonArray& persons);
+  bool handleDeanon(
+      const std::string& arguments,
+      PersonArray& persons,
+      MeetingArray& meetings);
+  bool handleOutPersons(
+      const std::string& arguments,
+      const PersonArray& persons);
 }
 
 #endif

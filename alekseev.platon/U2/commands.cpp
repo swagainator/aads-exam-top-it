@@ -1,5 +1,6 @@
 #include "commands.hpp"
 
+#include <fstream>
 #include <istream>
 #include <ostream>
 #include <stdexcept>
@@ -22,6 +23,71 @@ namespace alekseev
       return position == arguments.size();
     }
 
+    bool parseTwoSizes(
+        const std::string& arguments,
+        size_t& first,
+        size_t& second)
+    {
+      size_t position = skipSpaces(arguments, 0);
+      if (!parseSizeT(arguments, position, first))
+      {
+        return false;
+      }
+      const size_t secondBegin = skipSpaces(arguments, position);
+      if (secondBegin == position)
+      {
+        return false;
+      }
+      position = secondBegin;
+      if (!parseSizeT(arguments, position, second))
+      {
+        return false;
+      }
+      position = skipSpaces(arguments, position);
+      return position == arguments.size();
+    }
+
+    bool parseDescription(
+        const std::string& arguments,
+        size_t& id,
+        std::string& description)
+    {
+      size_t position = skipSpaces(arguments, 0);
+      if (!parseSizeT(arguments, position, id))
+      {
+        return false;
+      }
+      const size_t quotePosition = skipSpaces(arguments, position);
+      if (quotePosition == position ||
+          quotePosition == arguments.size() ||
+          arguments[quotePosition] != '"')
+      {
+        return false;
+      }
+      const size_t descriptionBegin = quotePosition + 1;
+      size_t descriptionEnd = descriptionBegin;
+      while (descriptionEnd < arguments.size() &&
+          arguments[descriptionEnd] != '"')
+      {
+        ++descriptionEnd;
+      }
+      if (descriptionEnd == descriptionBegin ||
+          descriptionEnd == arguments.size())
+      {
+        return false;
+      }
+      position = skipSpaces(arguments, descriptionEnd + 1);
+      if (position != arguments.size())
+      {
+        return false;
+      }
+      description.assign(
+          arguments,
+          descriptionBegin,
+          descriptionEnd - descriptionBegin);
+      return true;
+    }
+
     void writeMeetingViews(
         std::ostream& output,
         const MeetingViewArray& views)
@@ -30,6 +96,68 @@ namespace alekseev
       {
         output << views.data[i].id << ' ' << views.data[i].time << '\n';
       }
+    }
+
+    void collectFilteredViews(
+        const MeetingArray& meetings,
+        size_t id,
+        size_t time,
+        bool less,
+        MeetingViewArray& filtered)
+    {
+      MeetingViewArray views = {nullptr, 0, 0};
+      initArray(views);
+      try
+      {
+        collectMeetingViews(meetings, id, views);
+        for (size_t i = 0; i < views.size; ++i)
+        {
+          const bool matches = less ?
+              views.data[i].time < time :
+              views.data[i].time > time;
+          if (matches)
+          {
+            pushBack(filtered, views.data[i]);
+          }
+        }
+      }
+      catch (...)
+      {
+        destroyArray(views);
+        throw;
+      }
+      destroyArray(views);
+    }
+
+    bool handleTimeFilter(
+        const std::string& arguments,
+        std::ostream& output,
+        const PersonArray& persons,
+        const MeetingArray& meetings,
+        bool less)
+    {
+      size_t time = 0;
+      size_t id = 0;
+      if (!parseTwoSizes(arguments, time, id) ||
+          findPersonIndex(persons, id) == persons.size)
+      {
+        return false;
+      }
+      MeetingViewArray filtered = {nullptr, 0, 0};
+      initArray(filtered);
+      try
+      {
+        collectFilteredViews(meetings, id, time, less, filtered);
+        sortMeetingViews(filtered);
+        writeMeetingViews(output, filtered);
+      }
+      catch (...)
+      {
+        destroyArray(filtered);
+        throw;
+      }
+      destroyArray(filtered);
+      return true;
     }
   }
 }
@@ -88,6 +216,30 @@ bool alekseev::executeCommandLine(
   if (command == "meets")
   {
     return handleMeets(arguments, output, persons, meetings);
+  }
+  if (command == "commons")
+  {
+    return handleCommons(arguments, output, persons, meetings);
+  }
+  if (command == "less")
+  {
+    return handleLess(arguments, output, persons, meetings);
+  }
+  if (command == "greater")
+  {
+    return handleGreater(arguments, output, persons, meetings);
+  }
+  if (command == "redesc")
+  {
+    return handleRedesc(arguments, persons);
+  }
+  if (command == "deanon")
+  {
+    return handleDeanon(arguments, persons, meetings);
+  }
+  if (command == "out-persons")
+  {
+    return handleOutPersons(arguments, persons);
   }
   return false;
 }
@@ -181,5 +333,167 @@ bool alekseev::handleMeets(
     throw;
   }
   destroyArray(views);
+  return true;
+}
+
+bool alekseev::handleCommons(
+    const std::string& arguments,
+    std::ostream& output,
+    const PersonArray& persons,
+    const MeetingArray& meetings)
+{
+  size_t first = 0;
+  size_t second = 0;
+  if (!parseTwoSizes(arguments, first, second) ||
+      findPersonIndex(persons, first) == persons.size ||
+      findPersonIndex(persons, second) == persons.size)
+  {
+    return false;
+  }
+
+  Array< size_t > ids = {nullptr, 0, 0};
+  initArray(ids);
+  try
+  {
+    collectCommonPersons(meetings, first, second, ids);
+    sortIds(ids);
+    for (size_t i = 0; i < ids.size; ++i)
+    {
+      output << ids.data[i] << '\n';
+    }
+  }
+  catch (...)
+  {
+    destroyArray(ids);
+    throw;
+  }
+  destroyArray(ids);
+  return true;
+}
+
+bool alekseev::handleLess(
+    const std::string& arguments,
+    std::ostream& output,
+    const PersonArray& persons,
+    const MeetingArray& meetings)
+{
+  return handleTimeFilter(arguments, output, persons, meetings, true);
+}
+
+bool alekseev::handleGreater(
+    const std::string& arguments,
+    std::ostream& output,
+    const PersonArray& persons,
+    const MeetingArray& meetings)
+{
+  return handleTimeFilter(arguments, output, persons, meetings, false);
+}
+
+bool alekseev::handleRedesc(
+    const std::string& arguments,
+    PersonArray& persons)
+{
+  size_t id = 0;
+  std::string description;
+  if (!parseDescription(arguments, id, description))
+  {
+    return false;
+  }
+  const size_t index = findPersonIndex(persons, id);
+  if (index == persons.size)
+  {
+    return false;
+  }
+  persons.data[index].info = description;
+  return true;
+}
+
+bool alekseev::handleDeanon(
+    const std::string& arguments,
+    PersonArray& persons,
+    MeetingArray& meetings)
+{
+  size_t anonymousId = 0;
+  size_t describedId = 0;
+  if (!parseTwoSizes(arguments, anonymousId, describedId) ||
+      anonymousId == describedId)
+  {
+    return false;
+  }
+  const size_t anonymousIndex = findPersonIndex(persons, anonymousId);
+  const size_t describedIndex = findPersonIndex(persons, describedId);
+  if (anonymousIndex == persons.size ||
+      describedIndex == persons.size ||
+      hasPersonInfo(persons.data[anonymousIndex]) ||
+      !hasPersonInfo(persons.data[describedIndex]))
+  {
+    return false;
+  }
+
+  replacePersonInMeetings(meetings, anonymousId, describedId);
+  removeSelfMeetings(meetings);
+  removePersonAt(persons, anonymousIndex);
+  return true;
+}
+
+bool alekseev::handleOutPersons(
+    const std::string& arguments,
+    const PersonArray& persons)
+{
+  const size_t filenameBegin = skipSpaces(arguments, 0);
+  const size_t filenameEnd = trimRight(arguments, filenameBegin);
+  if (filenameBegin == filenameEnd)
+  {
+    return false;
+  }
+  for (size_t i = filenameBegin; i < filenameEnd; ++i)
+  {
+    if (isSpace(arguments[i]))
+    {
+      return false;
+    }
+  }
+  const std::string filename(
+      arguments,
+      filenameBegin,
+      filenameEnd - filenameBegin);
+  std::ofstream output(filename.c_str());
+  if (!output)
+  {
+    return false;
+  }
+
+  PersonArray described = {nullptr, 0, 0};
+  initPersonArray(described);
+  try
+  {
+    for (size_t i = 0; i < persons.size; ++i)
+    {
+      if (hasPersonInfo(persons.data[i]))
+      {
+        pushPerson(described, persons.data[i]);
+      }
+    }
+    if (described.size > 0)
+    {
+      writePersons(output, described);
+    }
+    else
+    {
+      output.flush();
+    }
+    output.close();
+    if (!output)
+    {
+      destroyPersonArray(described);
+      return false;
+    }
+  }
+  catch (const std::exception&)
+  {
+    destroyPersonArray(described);
+    return false;
+  }
+  destroyPersonArray(described);
   return true;
 }

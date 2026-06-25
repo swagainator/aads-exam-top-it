@@ -117,6 +117,102 @@ void alekseev::collectMeetingViews(
   }
 }
 
+void alekseev::collectCommonPersons(
+    const MeetingArray& meetings,
+    size_t first,
+    size_t second,
+    Array< size_t >& ids)
+{
+  MeetingViewArray firstViews = {nullptr, 0, 0};
+  MeetingViewArray secondViews = {nullptr, 0, 0};
+  initArray(firstViews);
+  initArray(secondViews);
+  try
+  {
+    collectMeetingViews(meetings, first, firstViews);
+    collectMeetingViews(meetings, second, secondViews);
+    for (size_t i = 0; i < firstViews.size; ++i)
+    {
+      const size_t candidate = firstViews.data[i].id;
+      bool inSecond = false;
+      for (size_t j = 0; j < secondViews.size; ++j)
+      {
+        if (secondViews.data[j].id == candidate)
+        {
+          inSecond = true;
+          break;
+        }
+      }
+      bool alreadyAdded = false;
+      for (size_t j = 0; j < ids.size; ++j)
+      {
+        if (ids.data[j] == candidate)
+        {
+          alreadyAdded = true;
+          break;
+        }
+      }
+      if (inSecond && !alreadyAdded)
+      {
+        pushBack(ids, candidate);
+      }
+    }
+  }
+  catch (...)
+  {
+    destroyArray(secondViews);
+    destroyArray(firstViews);
+    throw;
+  }
+  destroyArray(secondViews);
+  destroyArray(firstViews);
+}
+
+void alekseev::removePersonAt(PersonArray& persons, size_t index)
+{
+  if (index >= persons.size)
+  {
+    return;
+  }
+  for (size_t i = index + 1; i < persons.size; ++i)
+  {
+    persons.data[i - 1] = persons.data[i];
+  }
+  --persons.size;
+}
+
+void alekseev::replacePersonInMeetings(
+    MeetingArray& meetings,
+    size_t oldId,
+    size_t newId)
+{
+  for (size_t i = 0; i < meetings.size; ++i)
+  {
+    if (meetings.data[i].first == oldId)
+    {
+      meetings.data[i].first = newId;
+    }
+    if (meetings.data[i].second == oldId)
+    {
+      meetings.data[i].second = newId;
+    }
+  }
+}
+
+void alekseev::removeSelfMeetings(MeetingArray& meetings)
+{
+  size_t outputIndex = 0;
+  for (size_t i = 0; i < meetings.size; ++i)
+  {
+    if (meetings.data[i].first != meetings.data[i].second)
+    {
+      meetings.data[outputIndex] = meetings.data[i];
+      ++outputIndex;
+    }
+  }
+  meetings.size = outputIndex;
+}
+
 void alekseev::sortMeetingViews(MeetingViewArray& views)
 {
   for (size_t i = 1; i < views.size; ++i)
