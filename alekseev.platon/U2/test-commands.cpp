@@ -1,10 +1,10 @@
-#include <boost/test/unit_test.hpp>
-
-#include "commands.hpp"
-
 #include <cstdio>
 #include <fstream>
 #include <string>
+
+#include <boost/test/unit_test.hpp>
+
+#include "commands.hpp"
 
 namespace alekseev
 {
@@ -16,8 +16,7 @@ namespace alekseev
       pushPerson(persons, person);
     }
 
-    void addMeeting(
-        MeetingArray& meetings,
+    void addMeeting(MeetingArray& meetings,
         size_t first,
         size_t second,
         size_t time)
@@ -161,8 +160,8 @@ BOOST_AUTO_TEST_CASE(less_and_greater_filter_meetings)
     alekseev::executeCommands(commandInput, output, persons, meetings);
   }
 
-  BOOST_TEST(
-      alekseev::readFile(filename) == "33 9\n28 80\n32 20\n33 10\n");
+  BOOST_TEST(alekseev::readFile(filename) ==
+      "33 9\n28 80\n32 20\n33 10\n");
   alekseev::destroyMeetingArray(meetings);
   alekseev::destroyPersonArray(persons);
   std::remove(filename);
@@ -191,8 +190,7 @@ BOOST_AUTO_TEST_CASE(desc_with_description_updates_person)
   alekseev::addPerson(persons, 33, "");
   {
     std::ofstream output(filename);
-    BOOST_REQUIRE(alekseev::executeCommandLine(
-        "desc 33 \"Agent 007\"",
+    BOOST_REQUIRE(alekseev::executeCommandLine("desc 33 \"Agent 007\"",
         output,
         persons,
         meetings));
@@ -215,18 +213,15 @@ BOOST_AUTO_TEST_CASE(meet_alias_and_empty_results)
   alekseev::addPerson(persons, 41, "");
   {
     std::ofstream output(filename);
-    BOOST_REQUIRE(alekseev::executeCommandLine(
-        "meet 33",
+    BOOST_REQUIRE(alekseev::executeCommandLine("meet 33",
         output,
         persons,
         meetings));
-    BOOST_REQUIRE(alekseev::handleCommons(
-        " 33 41",
+    BOOST_REQUIRE(alekseev::handleCommons(" 33 41",
         output,
         persons,
         meetings));
-    BOOST_REQUIRE(alekseev::handleLess(
-        " 1 33",
+    BOOST_REQUIRE(alekseev::handleLess(" 1 33",
         output,
         persons,
         meetings));

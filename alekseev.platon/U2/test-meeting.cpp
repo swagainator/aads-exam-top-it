@@ -1,11 +1,12 @@
 #define BOOST_TEST_MODULE U2_MEETING
-#include <boost/test/included/unit_test.hpp>
-
-#include "meeting.hpp"
 
 #include <cstdio>
 #include <fstream>
 #include <string>
+
+#include <boost/test/included/unit_test.hpp>
+
+#include "meeting.hpp"
 
 BOOST_AUTO_TEST_CASE(parse_valid_meeting_line)
 {

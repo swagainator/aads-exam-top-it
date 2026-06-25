@@ -11,8 +11,7 @@
 #include <person_data.hpp>
 #include <text_utils.hpp>
 
-bool alekseev::parseProgramOptions(
-    int argc,
+bool alekseev::parseProgramOptions(int argc,
     char** argv,
     ProgramOptions& options)
 {
@@ -21,7 +20,7 @@ bool alekseev::parseProgramOptions(
   options.hasPersonInput = false;
   bool hasMeetingInput = false;
 
-  if (argc < 2 || argc > 3)
+  if ((argc < 2) || (argc > 3))
   {
     return false;
   }
@@ -35,7 +34,7 @@ bool alekseev::parseProgramOptions(
     }
     if (startsWith(argument, "data:"))
     {
-      if (hasMeetingInput || argument[5] == '\0')
+      if (hasMeetingInput || (argument[5] == '\0'))
       {
         return false;
       }
@@ -44,7 +43,7 @@ bool alekseev::parseProgramOptions(
     }
     else if (startsWith(argument, "in:"))
     {
-      if (options.hasPersonInput || argument[3] == '\0')
+      if (options.hasPersonInput || (argument[3] == '\0'))
       {
         return false;
       }
@@ -59,8 +58,7 @@ bool alekseev::parseProgramOptions(
   return hasMeetingInput;
 }
 
-int alekseev::runU2(
-    int argc,
+int alekseev::runU2(int argc,
     char** argv,
     std::istream& input,
     std::ostream& output,

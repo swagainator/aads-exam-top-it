@@ -24,13 +24,14 @@ bool alekseev::parseMeetingLine(const std::string& line, Meeting& meeting)
 {
   size_t position = 0;
   position = skipSpaces(line, position);
-  if (position == line.size() || !parseSizeT(line, position, meeting.first))
+  if ((position == line.size()) ||
+      !parseSizeT(line, position, meeting.first))
   {
     return false;
   }
 
   size_t secondBegin = skipSpaces(line, position);
-  if (secondBegin == position ||
+  if ((secondBegin == position) ||
       !parseSizeT(line, secondBegin, meeting.second))
   {
     return false;
@@ -38,7 +39,8 @@ bool alekseev::parseMeetingLine(const std::string& line, Meeting& meeting)
   position = secondBegin;
 
   size_t timeBegin = skipSpaces(line, position);
-  if (timeBegin == position || !parseSizeT(line, timeBegin, meeting.time))
+  if ((timeBegin == position) ||
+      !parseSizeT(line, timeBegin, meeting.time))
   {
     return false;
   }
@@ -46,8 +48,7 @@ bool alekseev::parseMeetingLine(const std::string& line, Meeting& meeting)
   return position == line.size();
 }
 
-bool alekseev::readMeetings(
-    std::istream& input,
+bool alekseev::readMeetings(std::istream& input,
     MeetingArray& meetings,
     PersonArray& persons)
 {
@@ -100,8 +101,7 @@ void alekseev::ensurePersonExists(PersonArray& persons, size_t id)
   pushPerson(persons, person);
 }
 
-void alekseev::collectMeetingViews(
-    const MeetingArray& meetings,
+void alekseev::collectMeetingViews(const MeetingArray& meetings,
     size_t id,
     MeetingViewArray& views)
 {
@@ -121,8 +121,7 @@ void alekseev::collectMeetingViews(
   }
 }
 
-void alekseev::collectCommonPersons(
-    const MeetingArray& meetings,
+void alekseev::collectCommonPersons(const MeetingArray& meetings,
     size_t first,
     size_t second,
     Array< size_t >& ids)
@@ -185,8 +184,7 @@ void alekseev::removePersonAt(PersonArray& persons, size_t index)
   --persons.size;
 }
 
-void alekseev::replacePersonInMeetings(
-    MeetingArray& meetings,
+void alekseev::replacePersonInMeetings(MeetingArray& meetings,
     size_t oldId,
     size_t newId)
 {
@@ -226,8 +224,8 @@ void alekseev::sortMeetingViews(MeetingViewArray& views)
     while (position > 0)
     {
       const MeetingView& previous = views.data[position - 1];
-      if (previous.id < value.id ||
-          (previous.id == value.id && previous.time <= value.time))
+      if ((previous.id < value.id) ||
+          ((previous.id == value.id) && (previous.time <= value.time)))
       {
         break;
       }
@@ -244,7 +242,7 @@ void alekseev::sortIds(Array< size_t >& ids)
   {
     const size_t value = ids.data[i];
     size_t position = i;
-    while (position > 0 && ids.data[position - 1] > value)
+    while ((position > 0) && (ids.data[position - 1] > value))
     {
       ids.data[position] = ids.data[position - 1];
       --position;

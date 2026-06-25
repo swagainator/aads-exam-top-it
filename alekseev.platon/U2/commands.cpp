@@ -23,8 +23,7 @@ namespace alekseev
       return position == arguments.size();
     }
 
-    bool parseTwoSizes(
-        const std::string& arguments,
+    bool parseTwoSizes(const std::string& arguments,
         size_t& first,
         size_t& second)
     {
@@ -47,8 +46,7 @@ namespace alekseev
       return position == arguments.size();
     }
 
-    bool parseDescription(
-        const std::string& arguments,
+    bool parseDescription(const std::string& arguments,
         size_t& id,
         std::string& description)
     {
@@ -58,21 +56,21 @@ namespace alekseev
         return false;
       }
       const size_t quotePosition = skipSpaces(arguments, position);
-      if (quotePosition == position ||
-          quotePosition == arguments.size() ||
-          arguments[quotePosition] != '"')
+      if ((quotePosition == position) ||
+          (quotePosition == arguments.size()) ||
+          (arguments[quotePosition] != '"'))
       {
         return false;
       }
       const size_t descriptionBegin = quotePosition + 1;
       size_t descriptionEnd = descriptionBegin;
-      while (descriptionEnd < arguments.size() &&
-          arguments[descriptionEnd] != '"')
+      while ((descriptionEnd < arguments.size()) &&
+          (arguments[descriptionEnd] != '"'))
       {
         ++descriptionEnd;
       }
-      if (descriptionEnd == descriptionBegin ||
-          descriptionEnd == arguments.size())
+      if ((descriptionEnd == descriptionBegin) ||
+          (descriptionEnd == arguments.size()))
       {
         return false;
       }
@@ -81,15 +79,13 @@ namespace alekseev
       {
         return false;
       }
-      description.assign(
-          arguments,
+      description.assign(arguments,
           descriptionBegin,
           descriptionEnd - descriptionBegin);
       return true;
     }
 
-    void writeMeetingViews(
-        std::ostream& output,
+    void writeMeetingViews(std::ostream& output,
         const MeetingViewArray& views)
     {
       if (views.size == 0)
@@ -103,23 +99,7 @@ namespace alekseev
       }
     }
 
-    void writeFilteredMeetingViews(
-        std::ostream& output,
-        const MeetingViewArray& views)
-    {
-      if (views.size == 0)
-      {
-        output << '\n';
-        return;
-      }
-      for (size_t i = 0; i < views.size; ++i)
-      {
-        output << views.data[i].id << ' ' << views.data[i].time << '\n';
-      }
-    }
-
-    void collectFilteredViews(
-        const MeetingArray& meetings,
+    void collectFilteredViews(const MeetingArray& meetings,
         size_t id,
         size_t time,
         bool less,
@@ -149,8 +129,7 @@ namespace alekseev
       destroyArray(views);
     }
 
-    bool handleTimeFilter(
-        const std::string& arguments,
+    bool handleTimeFilter(const std::string& arguments,
         std::ostream& output,
         const PersonArray& persons,
         const MeetingArray& meetings,
@@ -159,7 +138,7 @@ namespace alekseev
       size_t time = 0;
       size_t id = 0;
       if (!parseTwoSizes(arguments, time, id) ||
-          findPersonIndex(persons, id) == persons.size)
+          (findPersonIndex(persons, id) == persons.size))
       {
         return false;
       }
@@ -169,7 +148,7 @@ namespace alekseev
       {
         collectFilteredViews(meetings, id, time, less, filtered);
         sortMeetingViews(filtered);
-        writeFilteredMeetingViews(output, filtered);
+        writeMeetingViews(output, filtered);
       }
       catch (...)
       {
@@ -182,8 +161,7 @@ namespace alekseev
   }
 }
 
-void alekseev::executeCommands(
-    std::istream& input,
+void alekseev::executeCommands(std::istream& input,
     std::ostream& output,
     PersonArray& persons,
     MeetingArray& meetings)
@@ -207,15 +185,14 @@ void alekseev::executeCommands(
   }
 }
 
-bool alekseev::executeCommandLine(
-    const std::string& line,
+bool alekseev::executeCommandLine(const std::string& line,
     std::ostream& output,
     PersonArray& persons,
     MeetingArray& meetings)
 {
   const size_t commandBegin = skipSpaces(line, 0);
   size_t commandEnd = commandBegin;
-  while (commandEnd < line.size() && !isSpace(line[commandEnd]))
+  while ((commandEnd < line.size()) && !isSpace(line[commandEnd]))
   {
     ++commandEnd;
   }
@@ -240,7 +217,7 @@ bool alekseev::executeCommandLine(
     }
     return handleDesc(arguments, output, persons);
   }
-  if (command == "meet" || command == "meets")
+  if ((command == "meet") || (command == "meets"))
   {
     return handleMeets(arguments, output, persons, meetings);
   }
@@ -271,8 +248,7 @@ bool alekseev::executeCommandLine(
   return false;
 }
 
-bool alekseev::handleAnons(
-    const std::string& arguments,
+bool alekseev::handleAnons(const std::string& arguments,
     std::ostream& output,
     const PersonArray& persons)
 {
@@ -311,8 +287,7 @@ bool alekseev::handleAnons(
   return true;
 }
 
-bool alekseev::handleDesc(
-    const std::string& arguments,
+bool alekseev::handleDesc(const std::string& arguments,
     std::ostream& output,
     const PersonArray& persons)
 {
@@ -337,15 +312,14 @@ bool alekseev::handleDesc(
   return true;
 }
 
-bool alekseev::handleMeets(
-    const std::string& arguments,
+bool alekseev::handleMeets(const std::string& arguments,
     std::ostream& output,
     const PersonArray& persons,
     const MeetingArray& meetings)
 {
   size_t id = 0;
   if (!parseSingleSize(arguments, id) ||
-      findPersonIndex(persons, id) == persons.size)
+      (findPersonIndex(persons, id) == persons.size))
   {
     return false;
   }
@@ -367,8 +341,7 @@ bool alekseev::handleMeets(
   return true;
 }
 
-bool alekseev::handleCommons(
-    const std::string& arguments,
+bool alekseev::handleCommons(const std::string& arguments,
     std::ostream& output,
     const PersonArray& persons,
     const MeetingArray& meetings)
@@ -376,8 +349,8 @@ bool alekseev::handleCommons(
   size_t first = 0;
   size_t second = 0;
   if (!parseTwoSizes(arguments, first, second) ||
-      findPersonIndex(persons, first) == persons.size ||
-      findPersonIndex(persons, second) == persons.size)
+      (findPersonIndex(persons, first) == persons.size) ||
+      (findPersonIndex(persons, second) == persons.size))
   {
     return false;
   }
@@ -406,8 +379,7 @@ bool alekseev::handleCommons(
   return true;
 }
 
-bool alekseev::handleLess(
-    const std::string& arguments,
+bool alekseev::handleLess(const std::string& arguments,
     std::ostream& output,
     const PersonArray& persons,
     const MeetingArray& meetings)
@@ -415,8 +387,7 @@ bool alekseev::handleLess(
   return handleTimeFilter(arguments, output, persons, meetings, true);
 }
 
-bool alekseev::handleGreater(
-    const std::string& arguments,
+bool alekseev::handleGreater(const std::string& arguments,
     std::ostream& output,
     const PersonArray& persons,
     const MeetingArray& meetings)
@@ -424,8 +395,7 @@ bool alekseev::handleGreater(
   return handleTimeFilter(arguments, output, persons, meetings, false);
 }
 
-bool alekseev::handleRedesc(
-    const std::string& arguments,
+bool alekseev::handleRedesc(const std::string& arguments,
     PersonArray& persons)
 {
   size_t id = 0;
@@ -443,22 +413,21 @@ bool alekseev::handleRedesc(
   return true;
 }
 
-bool alekseev::handleDeanon(
-    const std::string& arguments,
+bool alekseev::handleDeanon(const std::string& arguments,
     PersonArray& persons,
     MeetingArray& meetings)
 {
   size_t anonymousId = 0;
   size_t describedId = 0;
   if (!parseTwoSizes(arguments, anonymousId, describedId) ||
-      anonymousId == describedId)
+      (anonymousId == describedId))
   {
     return false;
   }
   const size_t anonymousIndex = findPersonIndex(persons, anonymousId);
   const size_t describedIndex = findPersonIndex(persons, describedId);
-  if (anonymousIndex == persons.size ||
-      describedIndex == persons.size ||
+  if ((anonymousIndex == persons.size) ||
+      (describedIndex == persons.size) ||
       hasPersonInfo(persons.data[anonymousIndex]) ||
       !hasPersonInfo(persons.data[describedIndex]))
   {
@@ -471,8 +440,7 @@ bool alekseev::handleDeanon(
   return true;
 }
 
-bool alekseev::handleOutPersons(
-    const std::string& arguments,
+bool alekseev::handleOutPersons(const std::string& arguments,
     const PersonArray& persons)
 {
   const size_t filenameBegin = skipSpaces(arguments, 0);
@@ -488,8 +456,7 @@ bool alekseev::handleOutPersons(
       return false;
     }
   }
-  const std::string filename(
-      arguments,
+  const std::string filename(arguments,
       filenameBegin,
       filenameEnd - filenameBegin);
   std::ofstream output(filename.c_str(), std::ios::app);

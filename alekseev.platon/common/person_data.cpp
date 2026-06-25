@@ -33,8 +33,7 @@ void alekseev::pushPerson(PersonArray& persons, const Person& person)
   pushBack(persons, person);
 }
 
-bool alekseev::parsePersonLine(
-    const std::string& line,
+bool alekseev::parsePersonLine(const std::string& line,
     const PersonArray& persons,
     Person& person)
 {
@@ -47,7 +46,7 @@ bool alekseev::parsePersonLine(
 
   position = skipSpaces(line, position);
   const size_t end = trimRight(line, position);
-  if (position == end || containsPersonId(persons, id))
+  if ((position == end) || containsPersonId(persons, id))
   {
     return false;
   }
@@ -57,8 +56,7 @@ bool alekseev::parsePersonLine(
   return true;
 }
 
-void alekseev::readPersons(
-    std::istream& input,
+void alekseev::readPersons(std::istream& input,
     PersonArray& persons,
     PersonReadStats& stats)
 {
