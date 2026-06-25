@@ -69,10 +69,11 @@ void alekseev::readPersons(
   while (std::getline(input, line))
   {
     const size_t contentBegin = skipSpaces(line, 0);
-    if (contentBegin < line.size())
+    if (contentBegin == line.size())
     {
-      stats.hasInput = true;
+      continue;
     }
+    stats.hasInput = true;
     Person person = {0, std::string()};
     if (!parsePersonLine(line, persons, person))
     {
