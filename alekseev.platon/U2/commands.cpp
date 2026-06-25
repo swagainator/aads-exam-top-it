@@ -103,38 +103,17 @@ namespace alekseev
       }
     }
 
-    void sortMeetingViewsByTime(MeetingViewArray& views)
-    {
-      for (size_t i = 1; i < views.size; ++i)
-      {
-        const MeetingView value = views.data[i];
-        size_t position = i;
-        while (position > 0)
-        {
-          const MeetingView& previous = views.data[position - 1];
-          if (previous.time < value.time ||
-              (previous.time == value.time && previous.id <= value.id))
-          {
-            break;
-          }
-          views.data[position] = previous;
-          --position;
-        }
-        views.data[position] = value;
-      }
-    }
-
-    void writeMeetingIds(
+    void writeFilteredMeetingViews(
         std::ostream& output,
         const MeetingViewArray& views)
     {
       if (views.size > 0)
       {
-        output << views.data[0].id;
+        output << views.data[0].id << ' ' << views.data[0].time;
       }
       for (size_t i = 1; i < views.size; ++i)
       {
-        output << '\n' << views.data[i].id;
+        output << '\n' << views.data[i].id << ' ' << views.data[i].time;
       }
     }
 
@@ -200,8 +179,8 @@ namespace alekseev
       try
       {
         collectFilteredViews(meetings, id, time, less, filtered);
-        sortMeetingViewsByTime(filtered);
-        writeMeetingIds(output, filtered);
+        sortMeetingViews(filtered);
+        writeFilteredMeetingViews(output, filtered);
       }
       catch (...)
       {

@@ -142,17 +142,18 @@ BOOST_AUTO_TEST_CASE(less_and_greater_filter_meetings)
   alekseev::MeetingArray meetings = {nullptr, 0, 0};
   alekseev::initPersonArray(persons);
   alekseev::initMeetingArray(meetings);
+  alekseev::addPerson(persons, 28, "");
   alekseev::addPerson(persons, 31, "");
   alekseev::addPerson(persons, 32, "");
   alekseev::addPerson(persons, 33, "");
   alekseev::addPerson(persons, 41, "");
-  alekseev::addMeeting(meetings, 33, 41, 10);
-  alekseev::addMeeting(meetings, 33, 32, 11);
-  alekseev::addMeeting(meetings, 33, 31, 10);
-  alekseev::addMeeting(meetings, 32, 33, 99);
+  alekseev::addMeeting(meetings, 31, 33, 9);
+  alekseev::addMeeting(meetings, 41, 28, 80);
+  alekseev::addMeeting(meetings, 41, 32, 20);
+  alekseev::addMeeting(meetings, 41, 33, 10);
   {
     std::ofstream commandOutput(inputFilename);
-    commandOutput << "less 20 33\ngreater 20 33";
+    commandOutput << "less 10 31\ngreater 9 41";
   }
   {
     std::ifstream commandInput(inputFilename);
@@ -161,7 +162,7 @@ BOOST_AUTO_TEST_CASE(less_and_greater_filter_meetings)
   }
 
   BOOST_TEST(
-      alekseev::readFile(filename) == "31\n41\n32\n32");
+      alekseev::readFile(filename) == "33 9\n28 80\n32 20\n33 10");
   alekseev::destroyMeetingArray(meetings);
   alekseev::destroyPersonArray(persons);
   std::remove(filename);
