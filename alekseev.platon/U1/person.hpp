@@ -1,6 +1,8 @@
 #ifndef PERSON_HPP
 #define PERSON_HPP
 
+#include <exam_array.hpp>
+
 #include <cstddef>
 #include <string>
 
@@ -12,12 +14,7 @@ namespace alekseev
     std::string info;
   };
 
-  struct PersonArray
-  {
-    Person* data;
-    size_t size;
-    size_t capacity;
-  };
+  using PersonArray = Array< Person >;
 
   void initPersonArray(PersonArray& persons);
   void destroyPersonArray(PersonArray& persons);

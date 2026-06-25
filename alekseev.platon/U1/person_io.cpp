@@ -1,20 +1,11 @@
 #include "person_io.hpp"
 
-#include <cstring>
 #include <fstream>
 #include <istream>
-#include <limits>
 #include <ostream>
 #include <stdexcept>
 
-namespace alekseev
-{
-  bool isLineSpace(char value)
-  {
-    return value == ' ' || value == '\t' || value == '\r' || value == '\v' ||
-        value == '\f';
-  }
-}
+#include <text_utils.hpp>
 
 bool alekseev::parseProgramOptions(int argc, char** argv, ProgramOptions& options)
 {
@@ -35,7 +26,7 @@ bool alekseev::parseProgramOptions(int argc, char** argv, ProgramOptions& option
     {
       return false;
     }
-    if (std::strncmp(argument, "in:", 3) == 0)
+    if (startsWith(argument, "in:"))
     {
       if (options.hasInput || argument[3] == '\0')
       {
@@ -44,7 +35,7 @@ bool alekseev::parseProgramOptions(int argc, char** argv, ProgramOptions& option
       options.inputName = argument + 3;
       options.hasInput = true;
     }
-    else if (std::strncmp(argument, "out:", 4) == 0)
+    else if (startsWith(argument, "out:"))
     {
       if (options.hasOutput || argument[4] == '\0')
       {
@@ -68,31 +59,13 @@ bool alekseev::parsePersonLine(
 {
   size_t position = 0;
   size_t id = 0;
-  const size_t maxId = std::numeric_limits< size_t >::max();
-  while (position < line.size() && line[position] >= '0' && line[position] <= '9')
-  {
-    const size_t digit = static_cast< size_t >(line[position] - '0');
-    if (id > (maxId - digit) / 10)
-    {
-      return false;
-    }
-    id = id * 10 + digit;
-    ++position;
-  }
-  if (position == 0)
+  if (!parseSizeT(line, position, id))
   {
     return false;
   }
 
-  while (position < line.size() && isLineSpace(line[position]))
-  {
-    ++position;
-  }
-  size_t end = line.size();
-  while (end > position && isLineSpace(line[end - 1]))
-  {
-    --end;
-  }
+  position = skipSpaces(line, position);
+  const size_t end = trimRight(line, position);
   if (position == end)
   {
     return false;
