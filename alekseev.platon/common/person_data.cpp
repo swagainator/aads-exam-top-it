@@ -1,0 +1,106 @@
+#include "person_data.hpp"
+
+#include <istream>
+#include <ostream>
+#include <stdexcept>
+
+#include <text_utils.hpp>
+
+void alekseev::initPersonArray(PersonArray& persons)
+{
+  initArray(persons);
+}
+
+void alekseev::destroyPersonArray(PersonArray& persons)
+{
+  destroyArray(persons);
+}
+
+bool alekseev::containsPersonId(const PersonArray& persons, size_t id)
+{
+  for (size_t i = 0; i < persons.size; ++i)
+  {
+    if (persons.data[i].id == id)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+void alekseev::pushPerson(PersonArray& persons, const Person& person)
+{
+  pushBack(persons, person);
+}
+
+bool alekseev::parsePersonLine(const std::string& line,
+    const PersonArray& persons,
+    Person& person)
+{
+  size_t position = 0;
+  size_t id = 0;
+  if (!parseSizeT(line, position, id))
+  {
+    return false;
+  }
+
+  position = skipSpaces(line, position);
+  const size_t end = trimRight(line, position);
+  if ((position == end) || containsPersonId(persons, id))
+  {
+    return false;
+  }
+
+  person.id = id;
+  person.info.assign(line, position, end - position);
+  return true;
+}
+
+void alekseev::readPersons(std::istream& input,
+    PersonArray& persons,
+    PersonReadStats& stats)
+{
+  stats.success = 0;
+  stats.ignored = 0;
+  stats.hasInput = false;
+  std::string line;
+  while (std::getline(input, line))
+  {
+    const size_t contentBegin = skipSpaces(line, 0);
+    if (contentBegin == line.size())
+    {
+      continue;
+    }
+    stats.hasInput = true;
+    Person person = {0, std::string()};
+    if (!parsePersonLine(line, persons, person))
+    {
+      ++stats.ignored;
+      continue;
+    }
+    pushPerson(persons, person);
+    ++stats.success;
+  }
+  if (!input.eof())
+  {
+    throw std::runtime_error("input failure");
+  }
+}
+
+void alekseev::writePersons(std::ostream& output, const PersonArray& persons)
+{
+  if (persons.size > 0)
+  {
+    output << persons.data[0].id << ' ' << persons.data[0].info;
+  }
+  for (size_t i = 1; i < persons.size; ++i)
+  {
+    output << '\n' << persons.data[i].id << ' ' << persons.data[i].info;
+  }
+  output << '\n';
+  output.flush();
+  if (!output)
+  {
+    throw std::runtime_error("output failure");
+  }
+}
