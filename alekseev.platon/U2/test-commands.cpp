@@ -162,7 +162,7 @@ BOOST_AUTO_TEST_CASE(less_and_greater_filter_meetings)
   }
 
   BOOST_TEST(
-      alekseev::readFile(filename) == "33 9\n28 80\n32 20\n33 10");
+      alekseev::readFile(filename) == "33 9\n28 80\n32 20\n33 10\n");
   alekseev::destroyMeetingArray(meetings);
   alekseev::destroyPersonArray(persons);
   std::remove(filename);
