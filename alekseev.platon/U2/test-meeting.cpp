@@ -58,3 +58,34 @@ BOOST_AUTO_TEST_CASE(ignore_self_and_add_unknown_persons)
   alekseev::destroyPersonArray(persons);
   std::remove(filename);
 }
+
+BOOST_AUTO_TEST_CASE(store_each_undirected_meeting_once)
+{
+  const char* const filename = "/tmp/alekseev-u2-meeting-once.txt";
+  {
+    std::ofstream output(filename);
+    output << "33 41 10\n";
+    output << "33 32 11\n";
+    output << "33 31 10\n";
+    output << "33 33 100\n";
+    output << "32 33 99\n";
+  }
+
+  alekseev::PersonArray persons = {nullptr, 0, 0};
+  alekseev::MeetingArray meetings = {nullptr, 0, 0};
+  alekseev::initPersonArray(persons);
+  alekseev::initMeetingArray(meetings);
+  {
+    std::ifstream input(filename);
+    BOOST_REQUIRE(alekseev::readMeetings(input, meetings, persons));
+  }
+
+  BOOST_TEST(meetings.size == 4);
+  BOOST_TEST(meetings.data[2].first == 33);
+  BOOST_TEST(meetings.data[2].second == 31);
+  BOOST_TEST(meetings.data[2].time == 10);
+
+  alekseev::destroyMeetingArray(meetings);
+  alekseev::destroyPersonArray(persons);
+  std::remove(filename);
+}

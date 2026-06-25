@@ -84,18 +84,24 @@ BOOST_AUTO_TEST_CASE(meets_are_sorted_by_id_and_time)
   alekseev::MeetingArray meetings = {nullptr, 0, 0};
   alekseev::initPersonArray(persons);
   alekseev::initMeetingArray(meetings);
-  alekseev::addPerson(persons, 31, "The Agent");
-  alekseev::addPerson(persons, 32, "Visible");
+  alekseev::addPerson(persons, 31, "");
+  alekseev::addPerson(persons, 32, "");
   alekseev::addPerson(persons, 33, "");
-  alekseev::addMeeting(meetings, 33, 32, 99);
-  alekseev::addMeeting(meetings, 31, 33, 10);
+  alekseev::addPerson(persons, 41, "");
+  alekseev::addMeeting(meetings, 33, 41, 10);
   alekseev::addMeeting(meetings, 33, 32, 11);
+  alekseev::addMeeting(meetings, 33, 31, 10);
+  alekseev::addMeeting(meetings, 32, 33, 99);
   {
     std::ofstream output(filename);
     BOOST_REQUIRE(alekseev::handleMeets(" 33", output, persons, meetings));
+    BOOST_REQUIRE(alekseev::handleMeets(" 31", output, persons, meetings));
+    BOOST_REQUIRE(alekseev::handleMeets(" 32", output, persons, meetings));
   }
 
-  BOOST_TEST(alekseev::readFile(filename) == "31 10\n32 11\n32 99\n");
+  const std::string expected =
+      "31 10\n32 11\n32 99\n41 10\n33 10\n33 11\n33 99\n";
+  BOOST_TEST(alekseev::readFile(filename) == expected);
   alekseev::destroyMeetingArray(meetings);
   alekseev::destroyPersonArray(persons);
   std::remove(filename);
@@ -136,20 +142,24 @@ BOOST_AUTO_TEST_CASE(less_and_greater_filter_meetings)
   alekseev::MeetingArray meetings = {nullptr, 0, 0};
   alekseev::initPersonArray(persons);
   alekseev::initMeetingArray(meetings);
-  alekseev::addPerson(persons, 31, "known");
-  alekseev::addPerson(persons, 32, "known");
-  alekseev::addPerson(persons, 33, "known");
-  alekseev::addMeeting(meetings, 31, 32, 10);
-  alekseev::addMeeting(meetings, 31, 33, 30);
+  alekseev::addPerson(persons, 31, "");
+  alekseev::addPerson(persons, 32, "");
+  alekseev::addPerson(persons, 33, "");
+  alekseev::addPerson(persons, 41, "");
+  alekseev::addMeeting(meetings, 33, 41, 10);
+  alekseev::addMeeting(meetings, 33, 32, 11);
+  alekseev::addMeeting(meetings, 33, 31, 10);
+  alekseev::addMeeting(meetings, 32, 33, 99);
   {
     std::ofstream output(filename);
     BOOST_REQUIRE(
-        alekseev::handleLess(" 20 31", output, persons, meetings));
+        alekseev::handleLess(" 20 33", output, persons, meetings));
     BOOST_REQUIRE(
-        alekseev::handleGreater(" 20 31", output, persons, meetings));
+        alekseev::handleGreater(" 20 33", output, persons, meetings));
   }
 
-  BOOST_TEST(alekseev::readFile(filename) == "32 10\n33 30\n");
+  BOOST_TEST(
+      alekseev::readFile(filename) == "31 10\n32 11\n41 10\n32 99\n");
   alekseev::destroyMeetingArray(meetings);
   alekseev::destroyPersonArray(persons);
   std::remove(filename);
