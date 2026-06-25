@@ -1,10 +1,11 @@
 #define BOOST_TEST_MODULE U1_PERSON
 #include <boost/test/included/unit_test.hpp>
 
-#include "person.hpp"
 #include "person_io.hpp"
 
 #include <string>
+
+#include <person_data.hpp>
 
 BOOST_AUTO_TEST_CASE(parse_regular_person)
 {

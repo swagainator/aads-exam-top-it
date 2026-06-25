@@ -1,11 +1,7 @@
 #ifndef PERSON_IO_HPP
 #define PERSON_IO_HPP
 
-#include "person.hpp"
-
-#include <cstddef>
 #include <iosfwd>
-#include <string>
 
 namespace alekseev
 {
@@ -18,16 +14,6 @@ namespace alekseev
   };
 
   bool parseProgramOptions(int argc, char** argv, ProgramOptions& options);
-  bool parsePersonLine(
-      const std::string& line,
-      const PersonArray& persons,
-      Person& person);
-  void readPersons(
-      std::istream& input,
-      PersonArray& persons,
-      size_t& successCount,
-      size_t& ignoredCount);
-  void writePersons(std::ostream& output, const PersonArray& persons);
   int runU1(
       int argc,
       char** argv,
