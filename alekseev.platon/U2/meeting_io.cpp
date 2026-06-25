@@ -5,6 +5,7 @@
 #include <ostream>
 #include <stdexcept>
 
+#include "commands.hpp"
 #include "meeting.hpp"
 
 #include <person_data.hpp>
@@ -65,8 +66,6 @@ int alekseev::runU2(
     std::ostream& output,
     std::ostream& error)
 {
-  static_cast< void >(input);
-  static_cast< void >(output);
   ProgramOptions options = {nullptr, nullptr, false};
   if (!parseProgramOptions(argc, argv, options))
   {
@@ -101,6 +100,10 @@ int alekseev::runU2(
     {
       error << "invalid meeting data\n";
       result = 3;
+    }
+    if (result == 0)
+    {
+      executeCommands(input, output, persons, meetings);
     }
   }
   catch (const std::exception&)

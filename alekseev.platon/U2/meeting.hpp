@@ -38,6 +38,12 @@ namespace alekseev
   size_t findPersonIndex(const PersonArray& persons, size_t id);
   bool hasPersonInfo(const Person& person);
   void ensurePersonExists(PersonArray& persons, size_t id);
+  void collectMeetingViews(
+      const MeetingArray& meetings,
+      size_t id,
+      MeetingViewArray& views);
+  void sortMeetingViews(MeetingViewArray& views);
+  void sortIds(Array< size_t >& ids);
 }
 
 #endif
