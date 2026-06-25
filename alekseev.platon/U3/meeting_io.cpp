@@ -5,6 +5,7 @@
 #include <ostream>
 #include <stdexcept>
 
+#include "commands.hpp"
 #include "dated_meeting.hpp"
 
 #include <person_data.hpp>
@@ -62,8 +63,6 @@ int alekseev::runU3(
     std::ostream& output,
     std::ostream& error)
 {
-  static_cast< void >(input);
-  static_cast< void >(output);
   ProgramOptions options = {nullptr, false, {nullptr, 0, 0}};
   bool validOptions = false;
   try
@@ -120,6 +119,27 @@ int alekseev::runU3(
     if (result == 0)
     {
       sortDates(dates);
+      RangeState range = {true, 0, 0};
+      RangeStateArray history = {nullptr, 0, 0};
+      initInitialRange(dates, range);
+      initArray(history);
+      try
+      {
+        executeCommands(
+            input,
+            output,
+            persons,
+            meetings,
+            dates,
+            range,
+            history);
+      }
+      catch (...)
+      {
+        destroyArray(history);
+        throw;
+      }
+      destroyArray(history);
     }
   }
   catch (const std::exception&)
