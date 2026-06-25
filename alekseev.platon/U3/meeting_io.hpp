@@ -1,9 +1,9 @@
 #ifndef MEETING_IO_HPP
 #define MEETING_IO_HPP
 
-#include <exam_array.hpp>
-
 #include <iosfwd>
+
+#include <exam_array.hpp>
 
 namespace alekseev
 {
@@ -15,8 +15,7 @@ namespace alekseev
   };
 
   bool parseProgramOptions(int argc, char** argv, ProgramOptions& options);
-  int runU3(
-      int argc,
+  int runU3(int argc,
       char** argv,
       std::istream& input,
       std::ostream& output,

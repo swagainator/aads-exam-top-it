@@ -21,8 +21,7 @@ namespace alekseev
   }
 }
 
-void alekseev::initInitialRange(
-    const DateArray& dates,
+void alekseev::initInitialRange(const DateArray& dates,
     RangeState& range)
 {
   range.empty = dates.size == 0;
@@ -30,8 +29,7 @@ void alekseev::initInitialRange(
   range.lastIndex = dates.size == 0 ? 0 : dates.size - 1;
 }
 
-void alekseev::applyAfter(
-    const DateArray& dates,
+void alekseev::applyAfter(const DateArray& dates,
     const Date& date,
     RangeState& range)
 {
@@ -40,8 +38,7 @@ void alekseev::applyAfter(
     range.empty = true;
     return;
   }
-  const size_t index = findFirstDateNotBefore(
-      dates,
+  const size_t index = findFirstDateNotBefore(dates,
       range.firstIndex,
       range.lastIndex,
       date);
@@ -53,13 +50,11 @@ void alekseev::applyAfter(
   range.firstIndex = index;
 }
 
-void alekseev::applyBefore(
-    const DateArray& dates,
+void alekseev::applyBefore(const DateArray& dates,
     const Date& date,
     RangeState& range)
 {
-  const size_t index = findLastDateNotAfter(
-      dates,
+  const size_t index = findLastDateNotAfter(dates,
       range.firstIndex,
       range.lastIndex,
       date);
@@ -71,15 +66,13 @@ void alekseev::applyBefore(
   range.lastIndex = index;
 }
 
-void alekseev::pushRangeState(
-    RangeStateArray& states,
+void alekseev::pushRangeState(RangeStateArray& states,
     const RangeState& range)
 {
   pushBack(states, range);
 }
 
-bool alekseev::popRangeState(
-    RangeStateArray& states,
+bool alekseev::popRangeState(RangeStateArray& states,
     RangeState& range)
 {
   if (states.size == 0)
@@ -91,8 +84,7 @@ bool alekseev::popRangeState(
   return true;
 }
 
-bool alekseev::isDateInRange(
-    const DateArray& dates,
+bool alekseev::isDateInRange(const DateArray& dates,
     const RangeState& range,
     const Date& date)
 {
@@ -105,8 +97,7 @@ bool alekseev::isDateInRange(
       !isInputDateLess(date, dates.data[range.firstIndex]);
 }
 
-void alekseev::printRange(
-    std::ostream& output,
+void alekseev::printRange(std::ostream& output,
     const DateArray& dates,
     const RangeState& range)
 {

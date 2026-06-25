@@ -1,15 +1,15 @@
 #ifndef DATED_MEETING_HPP
 #define DATED_MEETING_HPP
 
-#include <exam_array.hpp>
-#include <person_data.hpp>
-
 #include <cstddef>
 #include <iosfwd>
 #include <string>
 
 #include "date.hpp"
 #include "range_state.hpp"
+
+#include <exam_array.hpp>
+#include <person_data.hpp>
 
 namespace alekseev
 {
@@ -33,14 +33,11 @@ namespace alekseev
 
   void initDatedMeetingArray(DatedMeetingArray& meetings);
   void destroyDatedMeetingArray(DatedMeetingArray& meetings);
-  void pushDatedMeeting(
-      DatedMeetingArray& meetings,
+  void pushDatedMeeting(DatedMeetingArray& meetings,
       const DatedMeeting& meeting);
-  bool parseDatedMeetingLine(
-      const std::string& line,
+  bool parseDatedMeetingLine(const std::string& line,
       DatedMeeting& meeting);
-  bool readDatedMeetings(
-      std::istream& input,
+  bool readDatedMeetings(std::istream& input,
       DatedMeetingArray& meetings,
       PersonArray& persons,
       DateArray& dates);
@@ -48,14 +45,12 @@ namespace alekseev
   bool hasPersonInfo(const Person& person);
   void ensurePersonExists(PersonArray& persons, size_t id);
   void removePersonAt(PersonArray& persons, size_t index);
-  void collectMeetingViews(
-      const DatedMeetingArray& meetings,
+  void collectMeetingViews(const DatedMeetingArray& meetings,
       const DateArray& dates,
       const RangeState& range,
       size_t id,
       MeetingViewArray& views);
-  void collectCommonPersons(
-      const DatedMeetingArray& meetings,
+  void collectCommonPersons(const DatedMeetingArray& meetings,
       const DateArray& dates,
       const RangeState& range,
       size_t first,
@@ -63,8 +58,7 @@ namespace alekseev
       Array< size_t >& ids);
   void sortMeetingViews(MeetingViewArray& views);
   void sortIds(Array< size_t >& ids);
-  void replacePersonInMeetings(
-      DatedMeetingArray& meetings,
+  void replacePersonInMeetings(DatedMeetingArray& meetings,
       size_t oldId,
       size_t newId);
   void removeSelfMeetings(DatedMeetingArray& meetings);

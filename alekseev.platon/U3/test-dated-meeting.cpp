@@ -1,18 +1,16 @@
+#include <cstdio>
+#include <fstream>
+
 #include <boost/test/unit_test.hpp>
 
 #include "dated_meeting.hpp"
-
-#include <cstdio>
-#include <fstream>
 
 BOOST_AUTO_TEST_CASE(parse_valid_dated_meeting)
 {
   alekseev::DatedMeeting meeting = {{0, 0, 0}, 0, 0, 0};
 
-  BOOST_REQUIRE(
-      alekseev::parseDatedMeetingLine(
-          "1 2 2026 33 41 10",
-          meeting));
+  BOOST_REQUIRE(alekseev::parseDatedMeetingLine("1 2 2026 33 41 10",
+      meeting));
   BOOST_TEST(meeting.date.day == 1);
   BOOST_TEST(meeting.date.month == 2);
   BOOST_TEST(meeting.date.year == 2026);
@@ -26,14 +24,10 @@ BOOST_AUTO_TEST_CASE(reject_invalid_dated_meetings)
   alekseev::DatedMeeting meeting = {{0, 0, 0}, 0, 0, 0};
 
   BOOST_TEST(!alekseev::parseDatedMeetingLine("", meeting));
-  BOOST_TEST(
-      !alekseev::parseDatedMeetingLine("1 2 2026 33 41", meeting));
-  BOOST_TEST(
-      !alekseev::parseDatedMeetingLine(
-          "1 2 2026 33 41 10 extra",
-          meeting));
-  BOOST_TEST(
-      !alekseev::parseDatedMeetingLine("-1 2 2026 33 41 10", meeting));
+  BOOST_TEST(!alekseev::parseDatedMeetingLine("1 2 2026 33 41", meeting));
+  BOOST_TEST(!alekseev::parseDatedMeetingLine(
+      "1 2 2026 33 41 10 extra", meeting));
+  BOOST_TEST(!alekseev::parseDatedMeetingLine("-1 2 2026 33 41 10", meeting));
 }
 
 BOOST_AUTO_TEST_CASE(self_row_adds_date_but_not_meeting_or_person)
@@ -51,9 +45,7 @@ BOOST_AUTO_TEST_CASE(self_row_adds_date_but_not_meeting_or_person)
   alekseev::initArray(dates);
   {
     std::ifstream input(filename);
-    BOOST_REQUIRE(
-        alekseev::readDatedMeetings(
-            input,
+    BOOST_REQUIRE(alekseev::readDatedMeetings(input,
             meetings,
             persons,
             dates));
@@ -84,9 +76,7 @@ BOOST_AUTO_TEST_CASE(non_self_row_adds_anonymous_persons)
   alekseev::initArray(dates);
   {
     std::ifstream input(filename);
-    BOOST_REQUIRE(
-        alekseev::readDatedMeetings(
-            input,
+    BOOST_REQUIRE(alekseev::readDatedMeetings(input,
             meetings,
             persons,
             dates));
@@ -119,9 +109,7 @@ BOOST_AUTO_TEST_CASE(mixed_file_keeps_date_from_incomplete_row)
   alekseev::initArray(dates);
   {
     std::ifstream input(filename);
-    BOOST_REQUIRE(
-        alekseev::readDatedMeetings(
-            input,
+    BOOST_REQUIRE(alekseev::readDatedMeetings(input,
             meetings,
             persons,
             dates));
@@ -151,9 +139,7 @@ BOOST_AUTO_TEST_CASE(file_with_only_incomplete_row_is_invalid)
   alekseev::initArray(dates);
   {
     std::ifstream input(filename);
-    BOOST_TEST(
-        !alekseev::readDatedMeetings(
-            input,
+    BOOST_TEST(!alekseev::readDatedMeetings(input,
             meetings,
             persons,
             dates));

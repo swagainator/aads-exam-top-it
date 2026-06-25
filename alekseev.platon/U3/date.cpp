@@ -41,8 +41,7 @@ void alekseev::printDate(std::ostream& output, const Date& date)
   output << date.day << ' ' << date.month << ' ' << date.year;
 }
 
-bool alekseev::parseDateFromCommand(
-    const std::string& text,
+bool alekseev::parseDateFromCommand(const std::string& text,
     size_t& position,
     Date& date)
 {
@@ -52,13 +51,13 @@ bool alekseev::parseDateFromCommand(
     return false;
   }
   size_t next = skipSpaces(text, position);
-  if (next == position || !parseSizeT(text, next, date.month))
+  if ((next == position) || !parseSizeT(text, next, date.month))
   {
     return false;
   }
   position = next;
   next = skipSpaces(text, position);
-  if (next == position || !parseSizeT(text, next, date.year))
+  if ((next == position) || !parseSizeT(text, next, date.year))
   {
     return false;
   }
@@ -84,7 +83,8 @@ void alekseev::sortDates(DateArray& dates)
   {
     const Date value = dates.data[i];
     size_t position = i;
-    while (position > 0 && isDateLess(value, dates.data[position - 1]))
+    while ((position > 0) &&
+        isDateLess(value, dates.data[position - 1]))
     {
       dates.data[position] = dates.data[position - 1];
       --position;
@@ -93,8 +93,7 @@ void alekseev::sortDates(DateArray& dates)
   }
 }
 
-size_t alekseev::findFirstDateNotBefore(
-    const DateArray& dates,
+size_t alekseev::findFirstDateNotBefore(const DateArray& dates,
     size_t first,
     size_t last,
     const Date& date)
@@ -109,8 +108,7 @@ size_t alekseev::findFirstDateNotBefore(
   return dates.size;
 }
 
-size_t alekseev::findLastDateNotAfter(
-    const DateArray& dates,
+size_t alekseev::findLastDateNotAfter(const DateArray& dates,
     size_t first,
     size_t last,
     const Date& date)

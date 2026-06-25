@@ -9,13 +9,12 @@ namespace alekseev
 {
   namespace
   {
-    bool parseNextSize(
-        const std::string& line,
+    bool parseNextSize(const std::string& line,
         size_t& position,
         size_t& value)
     {
       size_t begin = skipSpaces(line, position);
-      if (begin == position || !parseSizeT(line, begin, value))
+      if ((begin == position) || !parseSizeT(line, begin, value))
       {
         return false;
       }
@@ -35,19 +34,17 @@ void alekseev::destroyDatedMeetingArray(DatedMeetingArray& meetings)
   destroyArray(meetings);
 }
 
-void alekseev::pushDatedMeeting(
-    DatedMeetingArray& meetings,
+void alekseev::pushDatedMeeting(DatedMeetingArray& meetings,
     const DatedMeeting& meeting)
 {
   pushBack(meetings, meeting);
 }
 
-bool alekseev::parseDatedMeetingLine(
-    const std::string& line,
+bool alekseev::parseDatedMeetingLine(const std::string& line,
     DatedMeeting& meeting)
 {
   size_t position = skipSpaces(line, 0);
-  if (position == line.size() ||
+  if ((position == line.size()) ||
       !parseSizeT(line, position, meeting.date.day) ||
       !parseNextSize(line, position, meeting.date.month) ||
       !parseNextSize(line, position, meeting.date.year) ||
@@ -61,8 +58,7 @@ bool alekseev::parseDatedMeetingLine(
   return position == line.size();
 }
 
-bool alekseev::readDatedMeetings(
-    std::istream& input,
+bool alekseev::readDatedMeetings(std::istream& input,
     DatedMeetingArray& meetings,
     PersonArray& persons,
     DateArray& dates)
@@ -136,8 +132,7 @@ void alekseev::removePersonAt(PersonArray& persons, size_t index)
   --persons.size;
 }
 
-void alekseev::collectMeetingViews(
-    const DatedMeetingArray& meetings,
+void alekseev::collectMeetingViews(const DatedMeetingArray& meetings,
     const DateArray& dates,
     const RangeState& range,
     size_t id,
@@ -163,8 +158,7 @@ void alekseev::collectMeetingViews(
   }
 }
 
-void alekseev::collectCommonPersons(
-    const DatedMeetingArray& meetings,
+void alekseev::collectCommonPersons(const DatedMeetingArray& meetings,
     const DateArray& dates,
     const RangeState& range,
     size_t first,
@@ -225,8 +219,8 @@ void alekseev::sortMeetingViews(MeetingViewArray& views)
     while (position > 0)
     {
       const MeetingView& previous = views.data[position - 1];
-      if (previous.id < value.id ||
-          (previous.id == value.id && previous.time <= value.time))
+      if ((previous.id < value.id) ||
+          ((previous.id == value.id) && (previous.time <= value.time)))
       {
         break;
       }
@@ -243,7 +237,7 @@ void alekseev::sortIds(Array< size_t >& ids)
   {
     const size_t value = ids.data[i];
     size_t position = i;
-    while (position > 0 && ids.data[position - 1] > value)
+    while ((position > 0) && (ids.data[position - 1] > value))
     {
       ids.data[position] = ids.data[position - 1];
       --position;
@@ -252,8 +246,7 @@ void alekseev::sortIds(Array< size_t >& ids)
   }
 }
 
-void alekseev::replacePersonInMeetings(
-    DatedMeetingArray& meetings,
+void alekseev::replacePersonInMeetings(DatedMeetingArray& meetings,
     size_t oldId,
     size_t newId)
 {

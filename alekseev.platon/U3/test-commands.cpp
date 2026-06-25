@@ -1,10 +1,10 @@
-#include <boost/test/unit_test.hpp>
-
-#include "commands.hpp"
-
 #include <cstdio>
 #include <fstream>
 #include <string>
+
+#include <boost/test/unit_test.hpp>
+
+#include "commands.hpp"
 
 namespace alekseev
 {
@@ -22,28 +22,24 @@ namespace alekseev
       return result;
     }
 
-    void addCommandPerson(
-        PersonArray& persons,
+    void addCommandPerson(PersonArray& persons,
         size_t id,
         const std::string& info)
     {
       pushPerson(persons, Person{id, info});
     }
 
-    void addCommandMeeting(
-        DatedMeetingArray& meetings,
+    void addCommandMeeting(DatedMeetingArray& meetings,
         const Date& date,
         size_t first,
         size_t second,
         size_t time)
     {
-      pushDatedMeeting(
-          meetings,
+      pushDatedMeeting(meetings,
           DatedMeeting{date, first, second, time});
     }
 
-    void initCommandData(
-        PersonArray& persons,
+    void initCommandData(PersonArray& persons,
         DatedMeetingArray& meetings,
         DateArray& dates,
         RangeState& range)
@@ -66,8 +62,7 @@ namespace alekseev
       initInitialRange(dates, range);
     }
 
-    void destroyCommandData(
-        PersonArray& persons,
+    void destroyCommandData(PersonArray& persons,
         DatedMeetingArray& meetings,
         DateArray& dates)
     {
@@ -90,17 +85,12 @@ BOOST_AUTO_TEST_CASE(range_and_meets_respect_current_range)
   alekseev::initArray(history);
   {
     std::ofstream output(filename);
-    BOOST_REQUIRE(
-        alekseev::handleRange("", output, dates, range));
-    BOOST_REQUIRE(
-        alekseev::handleAfter(
-            " 3 1 2026",
+    BOOST_REQUIRE(alekseev::handleRange("", output, dates, range));
+    BOOST_REQUIRE(alekseev::handleAfter(" 3 1 2026",
             dates,
             range,
             history));
-    BOOST_REQUIRE(
-        alekseev::handleMeets(
-            " 33",
+    BOOST_REQUIRE(alekseev::handleMeets(" 33",
             output,
             persons,
             meetings,
@@ -124,33 +114,26 @@ BOOST_AUTO_TEST_CASE(commons_and_filters_respect_range)
   alekseev::DateArray dates = {nullptr, 0, 0};
   alekseev::RangeState range = {true, 0, 0};
   alekseev::initCommandData(persons, meetings, dates, range);
-  alekseev::addCommandMeeting(
-      meetings,
+  alekseev::addCommandMeeting(meetings,
       dates.data[0],
       41,
       31,
       5);
   {
     std::ofstream output(filename);
-    BOOST_REQUIRE(
-        alekseev::handleCommons(
-            " 33 31",
+    BOOST_REQUIRE(alekseev::handleCommons(" 33 31",
             output,
             persons,
             meetings,
             dates,
             range));
-    BOOST_REQUIRE(
-        alekseev::handleLess(
-            " 20 33",
+    BOOST_REQUIRE(alekseev::handleLess(" 20 33",
             output,
             persons,
             meetings,
             dates,
             range));
-    BOOST_REQUIRE(
-        alekseev::handleGreater(
-            " 20 33",
+    BOOST_REQUIRE(alekseev::handleGreater(" 20 33",
             output,
             persons,
             meetings,
@@ -174,8 +157,7 @@ BOOST_AUTO_TEST_CASE(redesc_and_deanon_update_all_data)
   alekseev::initCommandData(persons, meetings, dates, range);
 
   BOOST_REQUIRE(alekseev::handleRedesc(" 33 \"Mr. Bond\"", persons));
-  BOOST_TEST(
-      persons.data[alekseev::findPersonIndex(persons, 33)].info ==
+  BOOST_TEST(persons.data[alekseev::findPersonIndex(persons, 33)].info ==
       "Mr. Bond");
   BOOST_REQUIRE(alekseev::handleDeanon(" 41 31", persons, meetings));
   BOOST_TEST(alekseev::findPersonIndex(persons, 41) == persons.size);
