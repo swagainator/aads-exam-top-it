@@ -128,15 +128,26 @@ namespace alekseev
         std::ostream& output,
         const MeetingViewArray& views)
     {
-      if (views.size == 0)
+      if (views.size > 0)
       {
-        output << '\n';
-        return;
+        output << views.data[0].id;
       }
-      for (size_t i = 0; i < views.size; ++i)
+      for (size_t i = 1; i < views.size; ++i)
       {
-        output << views.data[i].id << '\n';
+        output << '\n' << views.data[i].id;
       }
+    }
+
+    bool isTimeFilterCommand(const std::string& line)
+    {
+      const size_t begin = skipSpaces(line, 0);
+      size_t end = begin;
+      while (end < line.size() && !isSpace(line[end]))
+      {
+        ++end;
+      }
+      const std::string command(line, begin, end - begin);
+      return command == "less" || command == "greater";
     }
 
     void collectFilteredViews(
@@ -212,9 +223,14 @@ void alekseev::executeCommands(
   std::string line;
   while (std::getline(input, line))
   {
-    if (!executeCommandLine(line, output, persons, meetings))
+    const bool valid = executeCommandLine(line, output, persons, meetings);
+    if (!valid)
     {
       output << "<INVALID COMMAND>\n";
+    }
+    else if (isTimeFilterCommand(line) && !input.eof())
+    {
+      output << '\n';
     }
     if (!output)
     {

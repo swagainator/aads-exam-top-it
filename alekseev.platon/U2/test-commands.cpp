@@ -30,11 +30,10 @@ namespace alekseev
     {
       std::ifstream input(filename);
       std::string result;
-      std::string line;
-      while (std::getline(input, line))
+      char value = '\0';
+      while (input.get(value))
       {
-        result += line;
-        result += '\n';
+        result += value;
       }
       return result;
     }
@@ -138,6 +137,7 @@ BOOST_AUTO_TEST_CASE(commons_are_unique_and_sorted)
 BOOST_AUTO_TEST_CASE(less_and_greater_filter_meetings)
 {
   const char* const filename = "/tmp/alekseev-u2-filters.txt";
+  const char* const inputFilename = "/tmp/alekseev-u2-filter-commands.txt";
   alekseev::PersonArray persons = {nullptr, 0, 0};
   alekseev::MeetingArray meetings = {nullptr, 0, 0};
   alekseev::initPersonArray(persons);
@@ -151,18 +151,21 @@ BOOST_AUTO_TEST_CASE(less_and_greater_filter_meetings)
   alekseev::addMeeting(meetings, 33, 31, 10);
   alekseev::addMeeting(meetings, 32, 33, 99);
   {
+    std::ofstream commandOutput(inputFilename);
+    commandOutput << "less 20 33\ngreater 20 33";
+  }
+  {
+    std::ifstream commandInput(inputFilename);
     std::ofstream output(filename);
-    BOOST_REQUIRE(
-        alekseev::handleLess(" 20 33", output, persons, meetings));
-    BOOST_REQUIRE(
-        alekseev::handleGreater(" 20 33", output, persons, meetings));
+    alekseev::executeCommands(commandInput, output, persons, meetings);
   }
 
   BOOST_TEST(
-      alekseev::readFile(filename) == "31\n41\n32\n32\n");
+      alekseev::readFile(filename) == "31\n41\n32\n32");
   alekseev::destroyMeetingArray(meetings);
   alekseev::destroyPersonArray(persons);
   std::remove(filename);
+  std::remove(inputFilename);
 }
 
 BOOST_AUTO_TEST_CASE(redesc_updates_description)
@@ -228,7 +231,7 @@ BOOST_AUTO_TEST_CASE(meet_alias_and_empty_results)
         meetings));
   }
 
-  BOOST_TEST(alekseev::readFile(filename) == "\n\n\n");
+  BOOST_TEST(alekseev::readFile(filename) == "\n\n");
   alekseev::destroyMeetingArray(meetings);
   alekseev::destroyPersonArray(persons);
   std::remove(filename);

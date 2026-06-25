@@ -68,6 +68,7 @@ int alekseev::runU2(
 {
   if (argc > 3)
   {
+    error << "Too many arguments\n";
     return 0;
   }
   ProgramOptions options = {nullptr, nullptr, false};
