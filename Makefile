@@ -5,6 +5,7 @@
 .SECONDARY:
 
 BOOST_LOCATION := $(shell test -f .boost_location && cat .boost_location ; true)
+# DOCKER_IMAGE ?= volgarenok/cxx-test:exam
 DOCKER_IMAGE ?= caseyrgb/rgb-tested:latest
 
 ifneq 'yes' '$(VERBOSE)'
