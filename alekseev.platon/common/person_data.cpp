@@ -60,22 +60,23 @@ bool alekseev::parsePersonLine(
 void alekseev::readPersons(
     std::istream& input,
     PersonArray& persons,
-    size_t& successCount,
-    size_t& ignoredCount)
+    PersonReadStats& stats)
 {
-  successCount = 0;
-  ignoredCount = 0;
+  stats.success = 0;
+  stats.ignored = 0;
+  stats.hasInput = false;
   std::string line;
   while (std::getline(input, line))
   {
+    stats.hasInput = true;
     Person person = {0, std::string()};
     if (!parsePersonLine(line, persons, person))
     {
-      ++ignoredCount;
+      ++stats.ignored;
       continue;
     }
     pushPerson(persons, person);
-    ++successCount;
+    ++stats.success;
   }
   if (!input.eof())
   {

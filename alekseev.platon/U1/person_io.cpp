@@ -83,9 +83,8 @@ int alekseev::runU1(
       inputSource = &inputFile;
     }
 
-    size_t successCount = 0;
-    size_t ignoredCount = 0;
-    readPersons(*inputSource, persons, successCount, ignoredCount);
+    PersonReadStats stats = {0, 0, false};
+    readPersons(*inputSource, persons, stats);
     if (inputFile.is_open())
     {
       inputFile.close();
@@ -104,10 +103,13 @@ int alekseev::runU1(
     }
 
     writePersons(*outputTarget, persons);
-    error << successCount << ' ' << ignoredCount << '\n';
-    if (!error)
+    if (stats.hasInput)
     {
-      throw std::runtime_error("error output failure");
+      error << stats.success << ' ' << stats.ignored << '\n';
+      if (!error)
+      {
+        throw std::runtime_error("error output failure");
+      }
     }
   }
   catch (const std::exception&)

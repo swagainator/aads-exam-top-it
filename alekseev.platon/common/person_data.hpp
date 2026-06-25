@@ -17,6 +17,13 @@ namespace alekseev
 
   using PersonArray = Array< Person >;
 
+  struct PersonReadStats
+  {
+    size_t success;
+    size_t ignored;
+    bool hasInput;
+  };
+
   void initPersonArray(PersonArray& persons);
   void destroyPersonArray(PersonArray& persons);
   bool containsPersonId(const PersonArray& persons, size_t id);
@@ -28,8 +35,7 @@ namespace alekseev
   void readPersons(
       std::istream& input,
       PersonArray& persons,
-      size_t& successCount,
-      size_t& ignoredCount);
+      PersonReadStats& stats);
   void writePersons(std::ostream& output, const PersonArray& persons);
 }
 
